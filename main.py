@@ -3,6 +3,10 @@ import tkinter as Tk
 global id_logueado # VARIABLE GLOBAL PARA SABER SI HAY UN USUARIO LOGUEADO
 # En la funciones si quiere modificarlo debo de colocar global id_logueado, pero si lo quiero leer no es necesario poner global
 
+# Esto es de prueba
+
+from estructuras.lista_simple.listaSimple import ListaSimple
+
 class Ventana(Tk.Tk):
     def __init__(self, titulo, witdh, height):
         super().__init__()
@@ -55,11 +59,11 @@ class Login(Ventana):
         
     def verify_login(self):
         global id_logueado # INDICAMOS QUE VAMOS A USAR LA VARIABLE GLOBAL
+        # POSIBLEMENTE YA NO LO USE PORQUE CREAR UNA CLASE PARA EL ID LOGUEADO
         
         username = self.entry_user.get() # OBTENEMOS EL TEXTO DE LOS CAMPOS, CON EL SELF ACLARAMOS QUE SON ATRIBUTOS DE LA CLASE
         passw = self.entry_pass.get() # OBTENEMOS EL TEXTO DE LOS CAMPOS
         
-        #print(f"Usuario: {username}, Contraseña: {passw}")
         if username == "admin" and passw == "admin":
             print("Bienvenido Admin")
             
