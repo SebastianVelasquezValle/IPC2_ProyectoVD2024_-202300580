@@ -9,6 +9,8 @@ import xml.etree.ElementTree as ET
 from clases.Artista import Artista
 from clases.Imagen import Imagen
 from clases.Solicitante import Solicitante
+from clases.SolicitudCola import SolicitudCola
+from clases.SolicitudPila import SolicitudPila
 from estructuras.estructuras import (listaSolicitantes, listaArtistas, colaSolicitudes)
 
 from clases.UsuarioLogueado import UsuarioLogueado
@@ -68,10 +70,10 @@ class Login(Ventana):
         #global id_logueado # INDICAMOS QUE VAMOS A USAR LA VARIABLE GLOBAL
         # POSIBLEMENTE YA NO LO USE PORQUE CREAR UNA CLASE PARA EL ID LOGUEADO
         
-        username = self.entry_user.get() # OBTENEMOS EL TEXTO DE LOS CAMPOS, CON EL SELF ACLARAMOS QUE SON ATRIBUTOS DE LA CLASE
+        id_user = self.entry_user.get() # OBTENEMOS EL TEXTO DE LOS CAMPOS, CON EL SELF ACLARAMOS QUE SON ATRIBUTOS DE LA CLASE
         passw = self.entry_pass.get() # OBTENEMOS EL TEXTO DE LOS CAMPOS
         
-        if username == "admin" and passw == "admin":
+        if id_user == "admin" and passw == "admin":
             print("Bienvenido Admin")
             
             # LIMPIAMOS LOS CAMPOS
@@ -83,10 +85,10 @@ class Login(Ventana):
             self.abrirMenu(MenuAdmin)
 
             
-        elif username.startswith("ART-") and passw == "123":
-            print(f"Bienvenido Artista {username}")
-            id_logueado = username
-            UsuarioLogueado(username)
+        elif id_user.startswith("ART-") and listaArtistas.loginUsuario(id_user, passw) == True:
+            print(f"Bienvenido Artista {id_user}")
+            #id_logueado = id_user
+            UsuarioLogueado(id_user)
             # LIMPIAMOS LOS CAMPOS
             self.limpiar_Campos_Login()
             #self.withdraw()
@@ -97,11 +99,10 @@ class Login(Ventana):
             self.abrirMenu(MenuArtista)
 
             
-        elif username.startswith("IPC-") and passw == "123":
-            print(f"Bienvenido Solicitante {username}")
-            id_logueado = username
-            
-            UsuarioLogueado(username)
+        elif id_user.startswith("IPC-") and listaSolicitantes.login(id_user, passw) == True:
+            print(f"Bienvenido Solicitante {id_user}")
+            #id_logueado = id_user
+            UsuarioLogueado(id_user)
             #print(f"Usuario logueado: {UsuarioLogueado.userlogueado}")
             
             # LIMPIAMOS LOS CAMPOS
@@ -324,7 +325,6 @@ class MenuArtista(Ventana):
         btn_CerrarSesion = Tk.Button(self, text="Cerrar Sesión", font=("Arial", 12), command=self.cerrarSessionMenu)
         btn_CerrarSesion.place(relx=0.7, rely=0.05, anchor=Tk.CENTER)
         
-        
 class MenuSolicitantesGaleria(Ventana):
     def __init__(self):
         super().__init__("Menú Solicitante", 800, 500)
@@ -353,7 +353,12 @@ class MenuSolicitantesSolicitar(Ventana):
     def __init__(self):
         super().__init__("Menú Solicitante", 800, 500)
         self.minsize(600,300)
+        print(f"Usuario logueado: {UsuarioLogueado.userlogueado}")
+        self.solicitante:Solicitante =listaSolicitantes.buscar(UsuarioLogueado.userlogueado)
+        self.imagen = None
         self.components()
+        
+        
         
     def components(self):
         # Titulo
@@ -362,20 +367,67 @@ class MenuSolicitantesSolicitar(Ventana):
         
         # Boton de solicitar
         btn_CargarFigurar = Tk.Button(self, text="Cargar Figurar", font=("Arial", 12))
+        btn_CargarFigurar.config(command=self.cargarXMLFiguras)
         btn_CargarFigurar.place(relx=0.3, rely=0.3, anchor=Tk.CENTER)
         
         btn_Solicitar = Tk.Button(self, text="Solicitar", font=("Arial", 12))
+        btn_Solicitar.config(command=self.Solicitar)
         btn_Solicitar.place(relx=0.3, rely=0.5, anchor=Tk.CENTER)
         
         btn_VerPila = Tk.Button(self, text="Ver Pila", font=("Arial", 12))
+        btn_VerPila.config(command=self.VerPila)
         btn_VerPila.place(relx=0.3, rely=0.7, anchor=Tk.CENTER)
         
         btn_VerLista = Tk.Button(self, text="Ver Lista", font=("Arial", 12))
+        btn_VerLista.config(command=self.VerLista)
         btn_VerLista.place(relx=0.3, rely=0.9, anchor=Tk.CENTER)
         
         btn_CerrarSesion = Tk.Button(self, text="Cerrar Sesión", font=("Arial", 12), command=self.cerrarSessionMenu)
         btn_CerrarSesion.place(relx=0.9, rely=0.05, anchor=Tk.CENTER)
+    
+    def VerPila(self):
+        self.solicitante.pila.graficar()
+        print(len(self.solicitante.imagenes))
+    
+    def VerLista(self):
+        pass
+        
+    def ImagenActual(imagen):
+        print(f'Nombre: {imagen.nombre}')
+        print(f'Ruta Imagen: {imagen.ruta_imagen}')
+        print(f'ID: {imagen.id}')
+        
+    def cargarXMLFiguras(self):
+        # ruta = filedialog.askopenfilename(title="Cargar Archivo", filetypes=(('Text files', '*.xml'), ('All files','*.*')))
+        try:
+            ruta = filedialog.askopenfilename(title="Cargar Archivo", filetypes=(('Text files', '*.xml'), ('All files','*.*')))
+            #PARSEAR EL XML
+            tree = ET.parse(ruta)
+            #Obtengo el elemento raiz
+            root = tree.getroot()
 
+            id = ''
+            if root.tag == "figura":
+                for elementos in root:
+                    if elementos.tag == "nombre":
+                        id = elementos.attrib["id"]
+            
+            nueva = SolicitudPila(id,ruta)
+            listaSolicitantes.insertaraPilaUsuario(UsuarioLogueado.userlogueado,nueva)
+        except:
+            print("Error al cargar el archivo")
+            
+        print(len(self.solicitante.imagenes))
+        if len(self.solicitante.imagenes) != 0:
+            self.imagen:Imagen = self.solicitante.imagenes.primero.valor
+            print("Si se")
+        
+    def Solicitar(self):
+        valorSacado = listaSolicitantes.sacardePilaUsuario(UsuarioLogueado.userlogueado)
+        while valorSacado != None:
+            nueva_solicitud = SolicitudCola(valorSacado.id,valorSacado.ruta_xml,UsuarioLogueado.userlogueado)
+            colaSolicitudes.enqueue(nueva_solicitud)
+            valorSacado = listaSolicitantes.sacardePilaUsuario(UsuarioLogueado.userlogueado)
 
 if __name__ == "__main__":
     app = Login()
