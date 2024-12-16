@@ -1,11 +1,13 @@
 import tkinter as Tk
+from tkinter import filedialog
+#Element Tree
+import xml.etree.ElementTree as ET
 
-global id_logueado # VARIABLE GLOBAL PARA SABER SI HAY UN USUARIO LOGUEADO
+#global id_logueado # VARIABLE GLOBAL PARA SABER SI HAY UN USUARIO LOGUEADO
 # En la funciones si quiere modificarlo debo de colocar global id_logueado, pero si lo quiero leer no es necesario poner global
 
-# Esto es de prueba
+from clases.UsuarioLogueado import UsuarioLogueado
 
-from estructuras.lista_simple.listaSimple import ListaSimple
 
 class Ventana(Tk.Tk):
     def __init__(self, titulo, witdh, height):
@@ -26,6 +28,7 @@ class Ventana(Tk.Tk):
         self.geometry(f"{width}x{height}+{x}+{y}") 
     
     def cerrarSessionMenu(self):
+        UsuarioLogueado(None)
         self.destroy() # Cerramos la ventana actual
         app.deiconify() # Mostramos la ventana de login
         #app.quit()
@@ -79,7 +82,7 @@ class Login(Ventana):
         elif username.startswith("ART-") and passw == "123":
             print(f"Bienvenido Artista {username}")
             id_logueado = username
-            
+            UsuarioLogueado(username)
             # LIMPIAMOS LOS CAMPOS
             self.limpiar_Campos_Login()
             #self.withdraw()
@@ -93,6 +96,9 @@ class Login(Ventana):
         elif username.startswith("IPC-") and passw == "123":
             print(f"Bienvenido Solicitante {username}")
             id_logueado = username
+            
+            UsuarioLogueado(username)
+            #print(f"Usuario logueado: {UsuarioLogueado.userlogueado}")
             
             # LIMPIAMOS LOS CAMPOS
             self.limpiar_Campos_Login()
@@ -133,21 +139,86 @@ class MenuAdmin(Ventana):
     def components(self):
         # Creamos los botones
         btn_CargarSolicitantes = Tk.Button(self, text="Cargar Solicitantes", font=("Arial", 12))
+        btn_CargarSolicitantes.config(command=self.cargarSolicitantes)
         btn_CargarSolicitantes.place(relx=0.3, rely=0.3, anchor=Tk.CENTER)
         
         btn_CargarArtistas = Tk.Button(self, text="Cargar Artistas", font=("Arial", 12))
+        btn_CargarArtistas.config(command=self.cargarArtista)
         btn_CargarArtistas.place(relx=0.6, rely=0.3, anchor=Tk.CENTER)
         
         btn_VerSolicitantes = Tk.Button(self, text="Ver Solicitantes", font=("Arial", 12))
         btn_VerSolicitantes.place(relx=0.3, rely=0.5, anchor=Tk.CENTER)
         
         btn_VerArtistas = Tk.Button(self, text="Ver Artistas", font=("Arial", 12))
+        #btn_VerArtistas.config()
         btn_VerArtistas.place(relx=0.6, rely=0.5, anchor=Tk.CENTER)
         
         btn_CerrarSesion = Tk.Button(self, text="Cerrar Sesión", font=("Arial", 12), command=self.cerrarSessionMenu)
         btn_CerrarSesion.place(relx=0.7, rely=0.05, anchor=Tk.CENTER)
         
+    def cargarSolicitantes():
+        ruta = filedialog.askopenfilename(title="Cargar Archivo", filetypes=(('Text files', '*.xml'), ('All files','*.*')))
         
+        #PARSEAR EL XML
+        tree = ET.parse(ruta)
+        #Obtengo el elemento raiz
+        root = tree.getroot()
+
+        if root.tag == "solicitantes":
+            for solicitante in root:
+                id = solicitante.attrib["id"]
+                pwd = solicitante.attrib["pwd"]
+                nombre = ''
+                correo = ''
+                telefono = ''
+                direccion = ''
+                for hijo in solicitante:
+                    if hijo.tag == "NombreCompleto":
+                        nombre = hijo.text
+                    elif hijo.tag == "CorreoElectronico":
+                        correo = hijo.text
+                    elif hijo.tag == "NumeroTelefono":
+                        telefono = hijo.text
+                    elif hijo.tag == "Direccion":
+                        direccion = hijo.text
+                        
+                #print(f"ID: {id}, PWD: {pwd}, Nombre: {nombre}, Correo: {correo}, Telefono: {telefono}, Direccion: {direccion}")
+                # nuevo_solicitante = Solicitante(id,pwd,nombre,correo,telefono,direccion)
+                # listaSolicitantes.insertar(nuevo_solicitante)
+    
+    def cargarArtista(self):
+        ruta = filedialog.askopenfilename(title="Cargar Archivo", filetypes=(('Text files', '*.xml'), ('All files','*.*')))
+        
+        print(f"Ruta: {ruta}")
+        
+        #PARSEAR EL XML
+        tree = ET.parse(ruta)
+        # #Obtengo el elemento raiz
+        root = tree.getroot()
+        if root.tag == "Artistas":
+            for artista in root:
+                id = artista.attrib["id"]
+                pwd = artista.attrib["pwd"]
+                nombre = ''
+                correo = ''
+                telefono = ''
+                especialidades = ''
+                notas = ''
+                for hijo in artista:
+                    if hijo.tag == "NombreCompleto":
+                        nombre = hijo.text
+                    elif hijo.tag == "CorreoElectronico":
+                        correo = hijo.text
+                    elif hijo.tag == "NumeroTelefono":
+                        telefono = hijo.text
+                    elif hijo.tag == "Especialidades":
+                        especialidades = hijo.text
+                    elif hijo.tag == "NotasAdicionales":
+                        notas = hijo.text
+
+                #print(f"ID: {id}, PWD: {pwd}, Nombre: {nombre}, Correo: {correo}, Telefono: {telefono}, Especialidades: {especialidades}, Notas: {notas}")
+    
+
 class MenuArtista(Ventana):
     def __init__(self):
         super().__init__("Menú Artista", 800, 500)
@@ -156,6 +227,7 @@ class MenuArtista(Ventana):
         self.components()
     
     def components(self):
+        print(F"Usuario logueado: {UsuarioLogueado.userlogueado}")
         # Este laberl mostrar quien nos esta mandando una imagen y el nombre de la imagen
         lbl_mensajeDelSolicitante = Tk.Label(self, font=("Arial", 12))
         lbl_mensajeDelSolicitante.config(text=f"Solicitante: {id_logueado} \n\nImagen: ") # Esto falta por configurar
@@ -229,3 +301,4 @@ class MenuSolicitantesSolicitar(Ventana):
 if __name__ == "__main__":
     app = Login()
     app.mainloop()
+    

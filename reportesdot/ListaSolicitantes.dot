@@ -1,0 +1,11 @@
+digraph G {
+    rankdir=LR;
+    node[shape=record, height=.1]
+    nodo1[label="{<f1>|1|<f2>}"];
+nodo2[label="{<f1>|2|<f2>}"];
+nodo3[label="{<f1>|3|<f2>}"];
+nodo1:f2 -> nodo2:f1;
+nodo2:f1 -> nodo1:f2;
+nodo2:f2 -> nodo3:f1;
+nodo3:f1 -> nodo2:f2;
+}
