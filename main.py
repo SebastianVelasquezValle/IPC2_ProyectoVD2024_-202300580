@@ -6,6 +6,11 @@ import xml.etree.ElementTree as ET
 #global id_logueado # VARIABLE GLOBAL PARA SABER SI HAY UN USUARIO LOGUEADO
 # En la funciones si quiere modificarlo debo de colocar global id_logueado, pero si lo quiero leer no es necesario poner global
 
+from clases.Artista import Artista
+from clases.Imagen import Imagen
+from clases.Solicitante import Solicitante
+from estructuras.estructuras import (listaSolicitantes, listaArtistas, colaSolicitudes)
+
 from clases.UsuarioLogueado import UsuarioLogueado
 
 
@@ -36,7 +41,6 @@ class Ventana(Tk.Tk):
 class Login(Ventana):
     def __init__(self):
         super().__init__("Login", 600, 400) #Tk.Tk.__init__(self) o tambien super().__init__()
-        #self.title("Login"
         self.minsize(400,200)
         self.maxsize(800,500)
         self.components()
@@ -61,7 +65,7 @@ class Login(Ventana):
         btn_login.place(relx=0.5, rely=0.7, anchor=Tk.CENTER)
         
     def verify_login(self):
-        global id_logueado # INDICAMOS QUE VAMOS A USAR LA VARIABLE GLOBAL
+        #global id_logueado # INDICAMOS QUE VAMOS A USAR LA VARIABLE GLOBAL
         # POSIBLEMENTE YA NO LO USE PORQUE CREAR UNA CLASE PARA EL ID LOGUEADO
         
         username = self.entry_user.get() # OBTENEMOS EL TEXTO DE LOS CAMPOS, CON EL SELF ACLARAMOS QUE SON ATRIBUTOS DE LA CLASE
@@ -131,7 +135,6 @@ class MenuAdmin(Ventana):
     def __init__(self):
         super().__init__("Menú Admin", 700, 500) #Tk.Tk.__init__(self) o tambien super().__init__()
         #self.title("Menú Admin")
-        #self.geometry("400x500+150+50")
         #self.center_window(800,500)
         self.minsize(600,300)
         self.components()
@@ -147,77 +150,153 @@ class MenuAdmin(Ventana):
         btn_CargarArtistas.place(relx=0.6, rely=0.3, anchor=Tk.CENTER)
         
         btn_VerSolicitantes = Tk.Button(self, text="Ver Solicitantes", font=("Arial", 12))
+        btn_VerSolicitantes.config(command=self.verSolicitantes)
         btn_VerSolicitantes.place(relx=0.3, rely=0.5, anchor=Tk.CENTER)
         
         btn_VerArtistas = Tk.Button(self, text="Ver Artistas", font=("Arial", 12))
-        #btn_VerArtistas.config()
+        btn_VerArtistas.config(command=self.verArtistas)
         btn_VerArtistas.place(relx=0.6, rely=0.5, anchor=Tk.CENTER)
         
         btn_CerrarSesion = Tk.Button(self, text="Cerrar Sesión", font=("Arial", 12), command=self.cerrarSessionMenu)
         btn_CerrarSesion.place(relx=0.7, rely=0.05, anchor=Tk.CENTER)
         
-    def cargarSolicitantes():
+    def cargarSolicitantes(self):
         ruta = filedialog.askopenfilename(title="Cargar Archivo", filetypes=(('Text files', '*.xml'), ('All files','*.*')))
+        #print(f"Ruta: {ruta}")
         
-        #PARSEAR EL XML
-        tree = ET.parse(ruta)
-        #Obtengo el elemento raiz
-        root = tree.getroot()
+        try:
+            #PARSEAR EL XML
+            tree = ET.parse(ruta)
+            #Obtengo el elemento raiz
+            root = tree.getroot()
 
-        if root.tag == "solicitantes":
-            for solicitante in root:
-                id = solicitante.attrib["id"]
-                pwd = solicitante.attrib["pwd"]
-                nombre = ''
-                correo = ''
-                telefono = ''
-                direccion = ''
-                for hijo in solicitante:
-                    if hijo.tag == "NombreCompleto":
-                        nombre = hijo.text
-                    elif hijo.tag == "CorreoElectronico":
-                        correo = hijo.text
-                    elif hijo.tag == "NumeroTelefono":
-                        telefono = hijo.text
-                    elif hijo.tag == "Direccion":
-                        direccion = hijo.text
+            if root.tag == "solicitantes":
+                for solicitante in root:
+                    id = solicitante.attrib["id"]
+                    pwd = solicitante.attrib["pwd"]
+                    nombre = ''
+                    correo = ''
+                    telefono = ''
+                    direccion = ''
+                    for hijo in solicitante:
+                        if hijo.tag == "NombreCompleto":
+                            nombre = hijo.text
+                        elif hijo.tag == "CorreoElectronico":
+                            correo = hijo.text
+                        elif hijo.tag == "NumeroTelefono":
+                            telefono = hijo.text
+                        elif hijo.tag == "Direccion":
+                            direccion = hijo.text
+                            
+                    #print(f"ID: {id}, PWD: {pwd}, Nombre: {nombre}, Correo: {correo}, Telefono: {telefono}, Direccion: {direccion}")
+                    nuevo_solicitante = Solicitante(id,pwd,nombre,correo,telefono,direccion)
+                    listaSolicitantes.insertar(nuevo_solicitante)
+        except:
+            print("Error al cargar el archivo")
+        
+        # #PARSEAR EL XML
+        # tree = ET.parse(ruta)
+        # #Obtengo el elemento raiz
+        # root = tree.getroot()
+
+        # if root.tag == "solicitantes":
+        #     for solicitante in root:
+        #         id = solicitante.attrib["id"]
+        #         pwd = solicitante.attrib["pwd"]
+        #         nombre = ''
+        #         correo = ''
+        #         telefono = ''
+        #         direccion = ''
+        #         for hijo in solicitante:
+        #             if hijo.tag == "NombreCompleto":
+        #                 nombre = hijo.text
+        #             elif hijo.tag == "CorreoElectronico":
+        #                 correo = hijo.text
+        #             elif hijo.tag == "NumeroTelefono":
+        #                 telefono = hijo.text
+        #             elif hijo.tag == "Direccion":
+        #                 direccion = hijo.text
                         
-                #print(f"ID: {id}, PWD: {pwd}, Nombre: {nombre}, Correo: {correo}, Telefono: {telefono}, Direccion: {direccion}")
-                # nuevo_solicitante = Solicitante(id,pwd,nombre,correo,telefono,direccion)
-                # listaSolicitantes.insertar(nuevo_solicitante)
-    
+        #         #print(f"ID: {id}, PWD: {pwd}, Nombre: {nombre}, Correo: {correo}, Telefono: {telefono}, Direccion: {direccion}")
+        #         nuevo_solicitante = Solicitante(id,pwd,nombre,correo,telefono,direccion)
+        #         listaSolicitantes.insertar(nuevo_solicitante)
+                
     def cargarArtista(self):
         ruta = filedialog.askopenfilename(title="Cargar Archivo", filetypes=(('Text files', '*.xml'), ('All files','*.*')))
         
-        print(f"Ruta: {ruta}")
+        #print(f"Ruta: {ruta}")
         
-        #PARSEAR EL XML
-        tree = ET.parse(ruta)
-        # #Obtengo el elemento raiz
-        root = tree.getroot()
-        if root.tag == "Artistas":
-            for artista in root:
-                id = artista.attrib["id"]
-                pwd = artista.attrib["pwd"]
-                nombre = ''
-                correo = ''
-                telefono = ''
-                especialidades = ''
-                notas = ''
-                for hijo in artista:
-                    if hijo.tag == "NombreCompleto":
-                        nombre = hijo.text
-                    elif hijo.tag == "CorreoElectronico":
-                        correo = hijo.text
-                    elif hijo.tag == "NumeroTelefono":
-                        telefono = hijo.text
-                    elif hijo.tag == "Especialidades":
-                        especialidades = hijo.text
-                    elif hijo.tag == "NotasAdicionales":
-                        notas = hijo.text
+        try:
+            #PARSEAR EL XML
+            tree = ET.parse(ruta)
+            # #Obtengo el elemento raiz
+            root = tree.getroot()
+            if root.tag == "Artistas":
+                for artista in root:
+                    id = artista.attrib["id"]
+                    pwd = artista.attrib["pwd"]
+                    nombre = ''
+                    correo = ''
+                    telefono = ''
+                    especialidades = ''
+                    notas = ''
+                    for hijo in artista:
+                        if hijo.tag == "NombreCompleto":
+                            nombre = hijo.text
+                        elif hijo.tag == "CorreoElectronico":
+                            correo = hijo.text
+                        elif hijo.tag == "NumeroTelefono":
+                            telefono = hijo.text
+                        elif hijo.tag == "Especialidades":
+                            especialidades = hijo.text
+                        elif hijo.tag == "NotasAdicionales":
+                            notas = hijo.text
 
-                #print(f"ID: {id}, PWD: {pwd}, Nombre: {nombre}, Correo: {correo}, Telefono: {telefono}, Especialidades: {especialidades}, Notas: {notas}")
+                    #print(f"ID: {id}, PWD: {pwd}, Nombre: {nombre}, Correo: {correo}, Telefono: {telefono}, Especialidades: {especialidades}, Notas: {notas}")
+                    nuevo_artista = Artista(id,pwd,nombre,correo,telefono,especialidades,notas)
+                    listaArtistas.insertar(nuevo_artista)
+        except:
+            print("Error al cargar el archivo")
+        # #PARSEAR EL XML
+        # tree = ET.parse(ruta)
+        # # #Obtengo el elemento raiz
+        # root = tree.getroot()
+        # if root.tag == "Artistas":
+        #     for artista in root:
+        #         id = artista.attrib["id"]
+        #         pwd = artista.attrib["pwd"]
+        #         nombre = ''
+        #         correo = ''
+        #         telefono = ''
+        #         especialidades = ''
+        #         notas = ''
+        #         for hijo in artista:
+        #             if hijo.tag == "NombreCompleto":
+        #                 nombre = hijo.text
+        #             elif hijo.tag == "CorreoElectronico":
+        #                 correo = hijo.text
+        #             elif hijo.tag == "NumeroTelefono":
+        #                 telefono = hijo.text
+        #             elif hijo.tag == "Especialidades":
+        #                 especialidades = hijo.text
+        #             elif hijo.tag == "NotasAdicionales":
+        #                 notas = hijo.text
+
+        #         #print(f"ID: {id}, PWD: {pwd}, Nombre: {nombre}, Correo: {correo}, Telefono: {telefono}, Especialidades: {especialidades}, Notas: {notas}")
+        #         nuevo_artista = Artista(id,pwd,nombre,correo,telefono,especialidades,notas)
+        #         listaArtistas.insertar(nuevo_artista)
     
+    def verSolicitantes(self):
+        try:
+            listaSolicitantes.graficar()
+        except:
+            print("No hay solicitantes")
+        
+    def verArtistas(self):
+        try:
+            listaArtistas.graficar()
+        except:
+            print("No hay artistas")
 
 class MenuArtista(Ventana):
     def __init__(self):
@@ -227,10 +306,10 @@ class MenuArtista(Ventana):
         self.components()
     
     def components(self):
-        print(F"Usuario logueado: {UsuarioLogueado.userlogueado}")
+        #print(F"Usuario logueado: {UsuarioLogueado.userlogueado}")
         # Este laberl mostrar quien nos esta mandando una imagen y el nombre de la imagen
         lbl_mensajeDelSolicitante = Tk.Label(self, font=("Arial", 12))
-        lbl_mensajeDelSolicitante.config(text=f"Solicitante: {id_logueado} \n\nImagen: ") # Esto falta por configurar
+        lbl_mensajeDelSolicitante.config(text=f"Solicitante: {UsuarioLogueado.userlogueado} \n\nImagen: ") # Esto falta por configurar
         lbl_mensajeDelSolicitante.place(relx=0.6, rely=0.3, anchor=Tk.CENTER)
         
         btn_Aceptar = Tk.Button(self, text="Aceptar", font=("Arial", 12))
