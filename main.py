@@ -12,6 +12,7 @@ from clases.Solicitante import Solicitante
 from clases.SolicitudCola import SolicitudCola
 from clases.SolicitudPila import SolicitudPila
 from estructuras.estructuras import (listaSolicitantes, listaArtistas, colaSolicitudes)
+from estructuras.matrizDispera.matrizDispersa import MatrizDispersa
 
 from clases.UsuarioLogueado import UsuarioLogueado
 
@@ -304,26 +305,89 @@ class MenuArtista(Ventana):
         super().__init__("Menú Artista", 800, 500)
         #self.title("Menú Artista")
         self.minsize(600,300)
+        
+        # Este laberl mostrar quien nos esta mandando una imagen y el nombre de la imagen
+        #print(f"Usuario logueado: {UsuarioLogueado.userlogueado}")
+        self.lbl_mensajeDelSolicitante = Tk.Label(self, font=("Arial", 12))
+        #lbl_mensajeDelSolicitante.config(text=f"Solicitante: {} \n\nImagen: ") # Esto falta por configurar
+        self.lbl_mensajeDelSolicitante.place(relx=0.6, rely=0.3, anchor=Tk.CENTER)
+        
+        self.iniciarDatos()
+        
         self.components()
+        
+    def iniciarDatos(self):
+        
+        if colaSolicitudes.verPrimero() == None:
+            self.lbl_mensajeDelSolicitante.config(text=f"No hay solicitudes")
+        else:
+            solicitud = colaSolicitudes.verPrimero()
+            self.lbl_mensajeDelSolicitante.config(text=f"Solicitante: {solicitud.id_solicitante} \n\nImagen: {solicitud.id}")
     
     def components(self):
         #print(F"Usuario logueado: {UsuarioLogueado.userlogueado}")
-        # Este laberl mostrar quien nos esta mandando una imagen y el nombre de la imagen
-        lbl_mensajeDelSolicitante = Tk.Label(self, font=("Arial", 12))
-        lbl_mensajeDelSolicitante.config(text=f"Solicitante: {UsuarioLogueado.userlogueado} \n\nImagen: ") # Esto falta por configurar
-        lbl_mensajeDelSolicitante.place(relx=0.6, rely=0.3, anchor=Tk.CENTER)
         
         btn_Aceptar = Tk.Button(self, text="Aceptar", font=("Arial", 12))
+        btn_Aceptar.config(command=self.AceptarSolicitud)
         btn_Aceptar.place(relx=0.3, rely=0.3, anchor=Tk.CENTER)
         
-        bnt_VerCola = Tk.Button(self, text="Ver Cola", font=("Arial", 12))
-        bnt_VerCola.place(relx=0.3, rely=0.6, anchor=Tk.CENTER)
+        btn_VerCola = Tk.Button(self, text="Ver Cola", font=("Arial", 12))
+        btn_VerCola.config(command=self.verCola)
+        btn_VerCola.place(relx=0.3, rely=0.6, anchor=Tk.CENTER)
         
         btn_ImagenesSolicitadas = Tk.Button(self, text="Imágenes Solicitadas", font=("Arial", 12))
+        btn_ImagenesSolicitadas.config(command=self.verListaCircular)
         btn_ImagenesSolicitadas.place(relx=0.3, rely=0.7, anchor=Tk.CENTER)
         
         btn_CerrarSesion = Tk.Button(self, text="Cerrar Sesión", font=("Arial", 12), command=self.cerrarSessionMenu)
         btn_CerrarSesion.place(relx=0.7, rely=0.05, anchor=Tk.CENTER)
+    
+    def AceptarSolicitud(self):
+        print(f"Usuario logueado: {UsuarioLogueado.userlogueado}")
+        
+        solicitud = colaSolicitudes.verPrimero()
+        if solicitud == None:
+            return
+        
+        #LO SACAMOS DE LA COLA
+        solicitud_aceptada = colaSolicitudes.dequeue()
+        #INSERTAN EN LA LISTA CIRCULAR
+        listaArtistas.insertarProcesados(UsuarioLogueado.userlogueado,solicitud_aceptada)
+        
+        #GENERAMOS LA FIGURA
+        matriz_figura = MatrizDispersa()
+        
+        #PARSEAR EL XML
+        tree = ET.parse(solicitud_aceptada.ruta_xml)
+        #Obtengo el elemento raiz
+        root = tree.getroot()
+        nombre_figura = ''
+        for elemento in root:
+            if elemento.tag == 'diseño':
+                for pixel in elemento:
+                    fila = int(pixel.attrib['fila'])
+                    columna = int(pixel.attrib['col'])
+                    color = pixel.text
+                    matriz_figura.insertar(fila,columna,color)
+            elif elemento.tag == 'nombre':
+                nombre_figura = elemento.text
+
+        #GRAFICAMOS
+        ruta = matriz_figura.graficar(solicitud_aceptada.id)
+        #creamos el nuevo objeto imagen para insertarlo a la lista doble del usuario
+        nueva_imagen = Imagen(solicitud_aceptada.id,nombre_figura,ruta)
+        #insertamos el objeto a la lista doble del usuario
+        listaSolicitantes.insertarImagenUsuario(solicitud_aceptada.id_solicitante,nueva_imagen)
+
+        self.iniciarDatos()
+    
+    def verCola(self):
+        colaSolicitudes.graficar()
+    
+    def verListaCircular(self):
+        print(f"Usuario logueado: {UsuarioLogueado.userlogueado}")
+        artista = listaArtistas.obtenerUsuario(UsuarioLogueado.userlogueado)
+        artista.procesadas.graficar()
         
 class MenuSolicitantesGaleria(Ventana):
     def __init__(self):
@@ -354,11 +418,17 @@ class MenuSolicitantesSolicitar(Ventana):
         super().__init__("Menú Solicitante", 800, 500)
         self.minsize(600,300)
         print(f"Usuario logueado: {UsuarioLogueado.userlogueado}")
-        self.solicitante:Solicitante =listaSolicitantes.buscar(UsuarioLogueado.userlogueado)
-        self.imagen = None
+        self.solicitante:Solicitante = listaSolicitantes.buscar(UsuarioLogueado.userlogueado)
+        # self.solicitante = None
+        # self.imagen = None
+        print(len(self.solicitante.imagenes))
+        #self.DatosIniciados()
         self.components()
         
-        
+    def DatosIniciados(self):
+        print(f"Usuario logueado: {UsuarioLogueado.userlogueado}")
+        self.solicitante:Solicitante = listaSolicitantes.buscar(UsuarioLogueado.userlogueado)
+        print(f"Solicitante imagenes: {len(self.solicitante.imagenes) if self.solicitante and self.solicitante.imagenes else 0}")
         
     def components(self):
         # Titulo
@@ -378,7 +448,7 @@ class MenuSolicitantesSolicitar(Ventana):
         btn_VerPila.config(command=self.VerPila)
         btn_VerPila.place(relx=0.3, rely=0.7, anchor=Tk.CENTER)
         
-        btn_VerLista = Tk.Button(self, text="Ver Lista", font=("Arial", 12))
+        btn_VerLista = Tk.Button(self, text="Ver Lista Doble", font=("Arial", 12))
         btn_VerLista.config(command=self.VerLista)
         btn_VerLista.place(relx=0.3, rely=0.9, anchor=Tk.CENTER)
         
@@ -386,9 +456,14 @@ class MenuSolicitantesSolicitar(Ventana):
         btn_CerrarSesion.place(relx=0.9, rely=0.05, anchor=Tk.CENTER)
     
     def VerPila(self):
-        self.solicitante.pila.graficar()
-        print(len(self.solicitante.imagenes))
-    
+        self.solicitante.pila.graficar() 
+        # if self.solicitante and self.solicitante.pila:
+        #     self.solicitante.pila.graficar()
+        # else:
+        #     print("No hay solicitudes")
+        #     self.solicitante.pila.graficar() # para revisar si en realidad no hay solicitudes
+            
+        
     def VerLista(self):
         pass
         
@@ -414,13 +489,17 @@ class MenuSolicitantesSolicitar(Ventana):
             
             nueva = SolicitudPila(id,ruta)
             listaSolicitantes.insertaraPilaUsuario(UsuarioLogueado.userlogueado,nueva)
+            print("Solicitud agregada")
+            
+            #self.DatosIniciados()
+            
         except:
             print("Error al cargar el archivo")
             
-        print(len(self.solicitante.imagenes))
-        if len(self.solicitante.imagenes) != 0:
-            self.imagen:Imagen = self.solicitante.imagenes.primero.valor
-            print("Si se")
+        #print(len(self.solicitante.imagenes))
+        # if len(self.solicitante.imagenes) != 0:
+        #     self.imagen:Imagen = self.solicitante.imagenes.primero.valor
+        #     print("Si se")
         
     def Solicitar(self):
         valorSacado = listaSolicitantes.sacardePilaUsuario(UsuarioLogueado.userlogueado)
