@@ -66,7 +66,7 @@ class ListaCircular:
             contador+=1
         return None
 
-    def graficar(self):
+    def graficar(self, id_Artista):
         codigo_dot = ''
 
         #CREAMOS EL CODIGO PARA LA LISTA
@@ -96,13 +96,13 @@ class ListaCircular:
         codigo_dot += '}'
 
         #CREAMOS EL ARCHIVO DOT
-        ruta_dot = 'reportesdot/Procesadas_IDArtista.dot'
+        ruta_dot = 'reportesdot/Procesadas_'+id_Artista+'.dot'
         archivo = open(ruta_dot, 'w')
         archivo.write(codigo_dot)
         archivo.close()
 
         #GENERAR LA IMAGEN
-        ruta_imagen = 'reportes/Procesadas_IDArtista.png'
+        ruta_imagen = 'reportes/Procesadas_'+id_Artista+'.png'
         comando = 'dot -Tpng '+ruta_dot + ' -o '+ruta_imagen
         os.system(comando)
 

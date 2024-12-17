@@ -387,19 +387,29 @@ class MenuArtista(Ventana):
     def verListaCircular(self):
         print(f"Usuario logueado: {UsuarioLogueado.userlogueado}")
         artista = listaArtistas.obtenerUsuario(UsuarioLogueado.userlogueado)
-        artista.procesadas.graficar()
+        artista.procesadas.graficar(UsuarioLogueado.userlogueado)
         
 class MenuSolicitantesGaleria(Ventana):
     def __init__(self):
         super().__init__("Menú Solicitante", 800, 500)
         self.minsize(600,300)
+        
+        # self.solicitante:Solicitante = listaSolicitantes.buscar(UsuarioLogueado.userlogueado)
+        # # self.solicitante = None
+        # self.imagen = None
+        # print(len(self.solicitante.imagenes))
+        # if len(self.solicitante.imagenes) != 0:
+        #     self.imagen:Imagen = self.solicitante.imagenes.primero.valor
+        
         self.components()
         
     def components(self):
         bnt_Anterior = Tk.Button(self, text="Anterior", font=("Arial", 12), bg="#5fd1de", width=20)
+        #bnt_Anterior.config(command=self.anteriorImagen)
         bnt_Anterior.place(relx=0.3, rely=0.15, anchor=Tk.CENTER)
         
         bnt_Siguiente = Tk.Button(self, text="Siguiente", font=("Arial", 12), bg="#5fd1de", width=20)
+        #bnt_Siguiente.config(command=self.siguienteImagen)
         bnt_Siguiente.place(relx=0.7, rely=0.15, anchor=Tk.CENTER)
         
         btn_Solicitar = Tk.Button(self, text="Solicitar", font=("Arial", 12), bg="#53e6b2", command=self.solicitarImagen)
@@ -408,6 +418,22 @@ class MenuSolicitantesGaleria(Ventana):
         btn_CerrarSesion = Tk.Button(self, text="Cerrar Sesión", font=("Arial", 12), bg="#e84661",command=self.cerrarSessionMenu)
         btn_CerrarSesion.place(relx=0.9, rely=0.05, anchor=Tk.CENTER)
         
+    def siguienteImagen(self):
+        # imagen = self.solicitante.imagenes.obtenerSiguiente(self.imagen.id)
+        # print(f"Imagen: {imagen.ruta_imagen}")
+        pass
+        
+    
+    def anteriorImagen(self):
+        # imagen = self.solicitante.imagenes.obtenerAnterior(self.imagen.id)
+        # print(f"Imagen: {imagen.ruta_imagen}")
+        pass
+        
+    def ImagenActual(imagen):
+        print(f'Nombre: {imagen.nombre}')
+        print(f'Ruta Imagen: {imagen.ruta_imagen}')
+        print(f'ID: {imagen.id}')
+    
     def solicitarImagen(self):
         self.destroy()
         solicitar = MenuSolicitantesSolicitar()
@@ -425,10 +451,10 @@ class MenuSolicitantesSolicitar(Ventana):
         #self.DatosIniciados()
         self.components()
         
-    def DatosIniciados(self):
-        print(f"Usuario logueado: {UsuarioLogueado.userlogueado}")
-        self.solicitante:Solicitante = listaSolicitantes.buscar(UsuarioLogueado.userlogueado)
-        print(f"Solicitante imagenes: {len(self.solicitante.imagenes) if self.solicitante and self.solicitante.imagenes else 0}")
+    # def DatosIniciados(self):
+    #     print(f"Usuario logueado: {UsuarioLogueado.userlogueado}")
+    #     self.solicitante:Solicitante = listaSolicitantes.buscar(UsuarioLogueado.userlogueado)
+    #     print(f"Solicitante imagenes: {len(self.solicitante.imagenes) if self.solicitante and self.solicitante.imagenes else 0}")
         
     def components(self):
         # Titulo
@@ -449,7 +475,7 @@ class MenuSolicitantesSolicitar(Ventana):
         btn_VerPila.place(relx=0.3, rely=0.7, anchor=Tk.CENTER)
         
         btn_VerLista = Tk.Button(self, text="Ver Lista Doble", font=("Arial", 12))
-        btn_VerLista.config(command=self.VerLista)
+        btn_VerLista.config(command=self.VerListaDoble)
         btn_VerLista.place(relx=0.3, rely=0.9, anchor=Tk.CENTER)
         
         btn_CerrarSesion = Tk.Button(self, text="Cerrar Sesión", font=("Arial", 12), command=self.cerrarSessionMenu)
@@ -464,8 +490,8 @@ class MenuSolicitantesSolicitar(Ventana):
         #     self.solicitante.pila.graficar() # para revisar si en realidad no hay solicitudes
             
         
-    def VerLista(self):
-        pass
+    def VerListaDoble(self):
+        self.solicitante.imagenes.graficar()
         
     def ImagenActual(imagen):
         print(f'Nombre: {imagen.nombre}')
