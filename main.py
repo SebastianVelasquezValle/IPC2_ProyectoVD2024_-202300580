@@ -3,8 +3,6 @@ from tkinter import filedialog
 #Element Tree
 import xml.etree.ElementTree as ET
 
-#global id_logueado # VARIABLE GLOBAL PARA SABER SI HAY UN USUARIO LOGUEADO
-# En la funciones si quiere modificarlo debo de colocar global id_logueado, pero si lo quiero leer no es necesario poner global
 
 from clases.Artista import Artista
 from clases.Imagen import Imagen
@@ -393,15 +391,29 @@ class MenuSolicitantesGaleria(Ventana):
     def __init__(self):
         super().__init__("Menú Solicitante", 800, 500)
         self.minsize(600,300)
-        
-        # self.solicitante:Solicitante = listaSolicitantes.buscar(UsuarioLogueado.userlogueado)
+        print(f"Usuario logueado: {UsuarioLogueado.userlogueado}")
+        self.solicitante:Solicitante = listaSolicitantes.buscar(UsuarioLogueado.userlogueado)
         # # self.solicitante = None
-        # self.imagen = None
-        # print(len(self.solicitante.imagenes))
-        # if len(self.solicitante.imagenes) != 0:
-        #     self.imagen:Imagen = self.solicitante.imagenes.primero.valor
+        imagen = None
+        print(len(self.solicitante.imagenes))
+        if len(self.solicitante.imagenes) != 0:
+            imagen:Imagen = self.solicitante.imagenes.primero.valor
+        
+        if imagen == None:
+            print("No hay imagenes")
+        else:
+            print("Hay imagenes")
+            print(f"Imagen: {imagen.ruta_imagen}")
+            self.mostrarImagen(imagen)
         
         self.components()
+        
+        
+    
+    def mostrarImagen(self, imagen):
+        print(f'Nombre: {imagen.nombre}')
+        print(f'Ruta Imagen: {imagen.ruta_imagen}')
+        print(f'ID: {imagen.id}')
         
     def components(self):
         bnt_Anterior = Tk.Button(self, text="Anterior", font=("Arial", 12), bg="#5fd1de", width=20)
@@ -429,15 +441,11 @@ class MenuSolicitantesGaleria(Ventana):
         # print(f"Imagen: {imagen.ruta_imagen}")
         pass
         
-    def ImagenActual(imagen):
-        print(f'Nombre: {imagen.nombre}')
-        print(f'Ruta Imagen: {imagen.ruta_imagen}')
-        print(f'ID: {imagen.id}')
-    
     def solicitarImagen(self):
         self.destroy()
         solicitar = MenuSolicitantesSolicitar()
         solicitar.protocol("WM_DELETE_WINDOW", lambda: self.destruirMenu(solicitar))
+        
 # La clase redirigira a la ventana de solicitar, con un boton de solicitar
 class MenuSolicitantesSolicitar(Ventana):
     def __init__(self):

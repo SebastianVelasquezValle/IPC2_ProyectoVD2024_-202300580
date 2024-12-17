@@ -2,5 +2,7 @@ digraph G {
     rankdir="RL";
     label="Cola";
     node[shape=box];
-    nodo0[label="ID: 3\nXML: C:/Users/sebas/OneDrive/Documentos/Sebastian/Usac/2do Vacaciones 2024/LAB_IPC2/Proyecto/IPCArt-Studio/Entradas/Imagenes/rana.xml\nID Solicitante: IPC-001"];
+    nodo0[label="ID: 2\nXML: C:/Users/sebas/OneDrive/Documentos/Sebastian/Usac/2do Vacaciones 2024/LAB_IPC2/Proyecto/IPCArt-Studio/Entradas/Imagenes/capibara.xml\nID Solicitante: IPC-001"];
+nodo1[label="ID: 3\nXML: C:/Users/sebas/OneDrive/Documentos/Sebastian/Usac/2do Vacaciones 2024/LAB_IPC2/Proyecto/IPCArt-Studio/Entradas/Imagenes/rana.xml\nID Solicitante: IPC-001"];
+nodo0 -> nodo1;
 }
