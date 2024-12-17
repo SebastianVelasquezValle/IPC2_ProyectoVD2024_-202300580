@@ -62,7 +62,7 @@ class ListaDobleCircular:
             actual = actual.siguiente
             contador+= 1
         
-    def graficar(self):
+    def graficar(self, id_solicitante):
         codigodot = ''
         codigodot += '''digraph G {
     rankdir=LR;
@@ -90,13 +90,13 @@ class ListaDobleCircular:
         codigodot += '}'
 
         #ESCRIBIMOS Y CREAMOS EL ARCHIVO DOT
-        ruta_dot = 'reportesdot/Lista_Doble_IDSolicitante.dot'
+        ruta_dot = 'reportesdot/Lista_Doble_'+id_solicitante+'.dot'
         archivo = open(ruta_dot,'w')
         archivo.write(codigodot)
         archivo.close()
 
         # GENERAMOS LA IMAGEN
-        ruta_imagen = 'reportes/Lista_Doble_IDSolicitante.png'
+        ruta_imagen = 'reportes/Lista_Doble_'+id_solicitante+'.png'
         comando = 'dot -Tpng '+ ruta_dot + ' -o '+ ruta_imagen
         os.system(comando)
 

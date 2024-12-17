@@ -1,0 +1,6 @@
+digraph G {
+    rankdir=LR;
+    node[shape=record, height=.1]
+    nodo0[label="{<f1>|ID: 3\nNombre: Rana\nRuta imagen: C:\Users\sebas\OneDrive\Documentos\Sebastian\Usac\2do Vacaciones 2024\LAB_IPC2\Proyecto\IPCArt-Studio\reportes\matrizDispersa_3.png\n|<f2>}"];
+nodo0:f1 -> nodo0:f2 [dir=both constraint=false];
+}
