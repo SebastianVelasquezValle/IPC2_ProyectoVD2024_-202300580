@@ -482,7 +482,7 @@ class MenuSolicitantesSolicitar(Ventana):
         btn_CerrarSesion.place(relx=0.9, rely=0.05, anchor=Tk.CENTER)
     
     def VerPila(self):
-        self.solicitante.pila.graficar() 
+        self.solicitante.pila.graficar(UsuarioLogueado.userlogueado) 
         # if self.solicitante and self.solicitante.pila:
         #     self.solicitante.pila.graficar()
         # else:
@@ -491,7 +491,7 @@ class MenuSolicitantesSolicitar(Ventana):
             
         
     def VerListaDoble(self):
-        self.solicitante.imagenes.graficar()
+        self.solicitante.imagenes.graficar(UsuarioLogueado.userlogueado)
         
     def ImagenActual(imagen):
         print(f'Nombre: {imagen.nombre}')
