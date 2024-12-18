@@ -1,8 +1,10 @@
 import tkinter as Tk
+import os
 from tkinter import filedialog
 #Element Tree
 import xml.etree.ElementTree as ET
-
+# importamos la libreria de PIL
+from PIL import Image, ImageTk
 
 from clases.Artista import Artista
 from clases.Imagen import Imagen
@@ -395,6 +397,7 @@ class MenuSolicitantesGaleria(Ventana):
         self.solicitante:Solicitante = listaSolicitantes.buscar(UsuarioLogueado.userlogueado)
         # # self.solicitante = None
         imagen = None
+        self.ruta_imagen_mostrar = ''
         print(len(self.solicitante.imagenes))
         if len(self.solicitante.imagenes) != 0:
             imagen:Imagen = self.solicitante.imagenes.primero.valor
@@ -414,6 +417,18 @@ class MenuSolicitantesGaleria(Ventana):
         print(f'Nombre: {imagen.nombre}')
         print(f'Ruta Imagen: {imagen.ruta_imagen}')
         print(f'ID: {imagen.id}')
+        # Guardamos la ruta de la imagen a mostrar
+        self.ruta_imagen_mostrar = imagen.ruta_imagen
+        
+        # Normalizamos la ruta
+        self.ruta_imagen_mostrar = os.path.normpath(self.ruta_imagen_mostrar)
+        print(f"Ruta normalizada: {self.ruta_imagen_mostrar}")
+        
+        if os.path.exists(self.ruta_imagen_mostrar):
+            print("La ruta de la imagen existe")
+        else:
+            print("La ruta de la imagen no existe")
+        
         
     def components(self):
         bnt_Anterior = Tk.Button(self, text="Anterior", font=("Arial", 12), bg="#5fd1de", width=20)
@@ -429,6 +444,28 @@ class MenuSolicitantesGaleria(Ventana):
         
         btn_CerrarSesion = Tk.Button(self, text="Cerrar Sesión", font=("Arial", 12), bg="#e84661",command=self.cerrarSessionMenu)
         btn_CerrarSesion.place(relx=0.9, rely=0.05, anchor=Tk.CENTER)
+        
+        # Cargar la imagen si la ruta existe
+        if self.ruta_imagen_mostrar and os.path.exists(self.ruta_imagen_mostrar):
+            try:
+                prueba = "reportes/Pila_IPC-001.png"
+                #imagen = Image.open(self.ruta_imagen_mostrar)
+                imagen = Image.open("reportes/matrizDispersa_3.png")
+                print("Imagen cargada")
+                imagen_render = imagen.resize((400, 400), Image.Resampling.LANCZOS)
+                self.imagen_tk = ImageTk.PhotoImage(imagen_render)
+                
+                # Mostramos la imagen
+                print("Mostrando imagen")
+                self.lbl_imagen = Tk.Label(self, image=self.imagen_tk)
+                self.lbl_imagen.place(relx=0.5, rely=0.5, anchor=Tk.CENTER)
+            except Exception as e:
+                print(f"Error al cargar la imagen: {e}")
+        else:
+            print("La ruta de la imagen es invalidad o no existe")
+        
+        
+        
         
     def siguienteImagen(self):
         # imagen = self.solicitante.imagenes.obtenerSiguiente(self.imagen.id)

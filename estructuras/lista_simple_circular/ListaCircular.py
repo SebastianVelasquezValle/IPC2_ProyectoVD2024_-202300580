@@ -48,13 +48,6 @@ class ListaCircular:
             contador+=1
         return None
     
-    def mostrar(self):
-        contador = 0
-        actual = self.primero
-        while contador < self.tamanio:
-            print(actual.valor)
-            actual = actual.siguiente
-            contador+=1
     
     def obtenerValor(self, id):
         contador = 0
