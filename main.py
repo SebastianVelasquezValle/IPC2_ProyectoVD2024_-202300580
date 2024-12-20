@@ -389,34 +389,38 @@ class MenuArtista(Ventana):
         artista = listaArtistas.obtenerUsuario(UsuarioLogueado.userlogueado)
         artista.procesadas.graficar(UsuarioLogueado.userlogueado)
         
-class MenuSolicitantesGaleria(Ventana):
+# voy a cambiar de donde hereda de Ventana a Tk.TopLevel
+class MenuSolicitantesGaleria(Tk.Toplevel):
     def __init__(self):
-        super().__init__("Menú Solicitante", 800, 500)
+        #super().__init__("Menú Solicitante", 800, 500)
+        super().__init__()
+        self.title("Menú Solicitante")
+        self.center_window(800,500)
+        
         self.minsize(600,300)
         print(f"Usuario logueado: {UsuarioLogueado.userlogueado}")
         self.solicitante:Solicitante = listaSolicitantes.buscar(UsuarioLogueado.userlogueado)
-        # # self.solicitante = None
-        imagen = None
+        
+        self.imagen = None
+        self.id_imagen = None
         self.ruta_imagen_mostrar = ''
         print(len(self.solicitante.imagenes))
         if len(self.solicitante.imagenes) != 0:
-            imagen:Imagen = self.solicitante.imagenes.primero.valor
+            self.imagen:Imagen = self.solicitante.imagenes.primero.valor
         
-        if imagen == None:
+        if self.imagen == None:
             print("No hay imagenes")
         else:
             print("Hay imagenes")
-            print(f"Imagen: {imagen.ruta_imagen}")
-            self.mostrarImagen(imagen)
+            self.mostrarImagen(self.imagen)
         
         self.components()
         
-        
-    
     def mostrarImagen(self, imagen):
         print(f'Nombre: {imagen.nombre}')
         print(f'Ruta Imagen: {imagen.ruta_imagen}')
         print(f'ID: {imagen.id}')
+        self.id_imagen = imagen.id
         # Guardamos la ruta de la imagen a mostrar
         self.ruta_imagen_mostrar = imagen.ruta_imagen
         
@@ -429,14 +433,13 @@ class MenuSolicitantesGaleria(Ventana):
         else:
             print("La ruta de la imagen no existe")
         
-        
     def components(self):
         bnt_Anterior = Tk.Button(self, text="Anterior", font=("Arial", 12), bg="#5fd1de", width=20)
-        #bnt_Anterior.config(command=self.anteriorImagen)
+        bnt_Anterior.config(command=self.anteriorImagen)
         bnt_Anterior.place(relx=0.3, rely=0.15, anchor=Tk.CENTER)
         
         bnt_Siguiente = Tk.Button(self, text="Siguiente", font=("Arial", 12), bg="#5fd1de", width=20)
-        #bnt_Siguiente.config(command=self.siguienteImagen)
+        bnt_Siguiente.config(command=self.siguienteImagen)
         bnt_Siguiente.place(relx=0.7, rely=0.15, anchor=Tk.CENTER)
         
         btn_Solicitar = Tk.Button(self, text="Solicitar", font=("Arial", 12), bg="#53e6b2", command=self.solicitarImagen)
@@ -445,44 +448,122 @@ class MenuSolicitantesGaleria(Ventana):
         btn_CerrarSesion = Tk.Button(self, text="Cerrar Sesión", font=("Arial", 12), bg="#e84661",command=self.cerrarSessionMenu)
         btn_CerrarSesion.place(relx=0.9, rely=0.05, anchor=Tk.CENTER)
         
+        self.vistaImagen = Tk.Frame(self, width=400, height=300, bg="blue")
+        self.vistaImagen.place(relx=0.5, rely=0.65, anchor=Tk.CENTER)
+        
+        self.lbl_imagen = Tk.Label(self.vistaImagen)
+        self.lbl_imagen.place(relx=0.5, rely=0.5, anchor=Tk.CENTER)
+        #self.lbl_imagen.config(text="Prueba de imagen")
+        
         # Cargar la imagen si la ruta existe
         if self.ruta_imagen_mostrar and os.path.exists(self.ruta_imagen_mostrar):
             try:
-                prueba = "reportes/Pila_IPC-001.png"
                 #imagen = Image.open(self.ruta_imagen_mostrar)
-                imagen = Image.open("reportes/matrizDispersa_3.png")
+                #PRUEBA
+                print(f"Ruta de la imagen: {self.ruta_imagen_mostrar}")
+                #self.imagenM = Image.open("reportes/matrizDispersa_4.png")
+                self.imagenM = Image.open(self.ruta_imagen_mostrar)
                 print("Imagen cargada")
-                imagen_render = imagen.resize((400, 400), Image.Resampling.LANCZOS)
-                self.imagen_tk = ImageTk.PhotoImage(imagen_render)
                 
+                width, height = self.vistaImagen.winfo_width(), self.vistaImagen.winfo_height()
+                self.imagen_render = self.imagenM.resize((400, 300))
+                self.imagen_tk = ImageTk.PhotoImage(self.imagen_render)
+
                 # Mostramos la imagen
-                print("Mostrando imagen")
-                self.lbl_imagen = Tk.Label(self, image=self.imagen_tk)
-                self.lbl_imagen.place(relx=0.5, rely=0.5, anchor=Tk.CENTER)
+                print("Mostrando imagen iniciado")
+                self.lbl_imagen.config(image=self.imagen_tk)
+                self.lbl_imagen.image = self.imagen_tk
+                print("Mostrando imagen finalizado")
+                print(f"Permisos del archivo: {os.access(self.ruta_imagen_mostrar, os.R_OK)}")
             except Exception as e:
-                print(f"Error al cargar la imagen: {e}")
+                print(f"Error al cargar la imagen desde {self.ruta_imagen_mostrar}: {e}")
         else:
             print("La ruta de la imagen es invalidad o no existe")
         
         
-        
-        
     def siguienteImagen(self):
-        # imagen = self.solicitante.imagenes.obtenerSiguiente(self.imagen.id)
-        # print(f"Imagen: {imagen.ruta_imagen}")
-        pass
+        #imagen = self.solicitante.imagenes.obtenerSiguiente(self.imagen.id)
+        imagen = self.solicitante.imagenes.obtenerSiguiente(self.id_imagen)
+        print(f"Imagen: {imagen.ruta_imagen}")
+        print(f"Imagen: {imagen.id}")
+        self.id_imagen = imagen.id
+        self.ruta_imagen_mostrar = imagen.ruta_imagen
+        self.ruta_imagen_mostrar = os.path.normpath(self.ruta_imagen_mostrar)
         
+        if imagen == None:
+            print("No hay mas imagenes")
+        else:
+            try:
+                print(f"Ruta de la imagen: {self.ruta_imagen_mostrar}")
+                self.imagenM = Image.open(self.ruta_imagen_mostrar)
+                print("Imagen cargada")
+                
+                width, height = self.vistaImagen.winfo_width(), self.vistaImagen.winfo_height()
+                self.imagen_render = self.imagenM.resize((400, 300))
+                self.imagen_tk = ImageTk.PhotoImage(self.imagen_render)
+                
+                # Mostramos la imagen
+                print("Mostrando imagen iniciado")
+                self.lbl_imagen.config(image=self.imagen_tk)
+                self.lbl_imagen.image = self.imagen_tk
+                print("Mostrando imagen finalizado")
+                print(f"Permisos del archivo: {os.access(self.ruta_imagen_mostrar, os.R_OK)}")
+            except Exception as e:
+                print(f"Error al cargar la imagen desde {imagen.ruta_imagen}: {e}")
+        
+
     
     def anteriorImagen(self):
-        # imagen = self.solicitante.imagenes.obtenerAnterior(self.imagen.id)
-        # print(f"Imagen: {imagen.ruta_imagen}")
-        pass
+        imagen = self.solicitante.imagenes.obtenerAnterior(self.id_imagen)
+        print(f"Imagen: {imagen.ruta_imagen}")
+        print(f"Imagen: {imagen.id}")
+        self.id_imagen = imagen.id
+        self.ruta_imagen_mostrar = imagen.ruta_imagen
+        self.ruta_imagen_mostrar = os.path.normpath(self.ruta_imagen_mostrar)
+        
+        if imagen == None:
+            print("No hay mas imagenes")
+        else:
+            try:
+                print(f"Ruta de la imagen: {self.ruta_imagen_mostrar}")
+                self.imagenM = Image.open(self.ruta_imagen_mostrar)
+                print("Imagen cargada")
+                
+                width, height = self.vistaImagen.winfo_width(), self.vistaImagen.winfo_height()
+                self.imagen_render = self.imagenM.resize((400, 300))
+                self.imagen_tk = ImageTk.PhotoImage(self.imagen_render)
+                
+                # Mostramos la imagen
+                print("Mostrando imagen iniciado")
+                self.lbl_imagen.config(image=self.imagen_tk)
+                self.lbl_imagen.image = self.imagen_tk
+                print("Mostrando imagen finalizado")
+                print(f"Permisos del archivo: {os.access(self.ruta_imagen_mostrar, os.R_OK)}")
+            except Exception as e:
+                print(f"Error al cargar la imagen desde {imagen.ruta_imagen}: {e}")
         
     def solicitarImagen(self):
         self.destroy()
         solicitar = MenuSolicitantesSolicitar()
         solicitar.protocol("WM_DELETE_WINDOW", lambda: self.destruirMenu(solicitar))
         
+    def center_window(self, width, height):
+        # Obtén la resolución de la pantalla
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+
+            # Calcula la posición
+        x = (screen_width - width) // 2
+        y = (screen_height - height) // 2
+
+        # Establece la geometría con la posición calculada
+        self.geometry(f"{width}x{height}+{x}+{y}") 
+    
+    def cerrarSessionMenu(self):
+        UsuarioLogueado(None)
+        self.destroy() # Cerramos la ventana actual
+        app.deiconify() # Mostramos la ventana de login
+        #app.quit()
 # La clase redirigira a la ventana de solicitar, con un boton de solicitar
 class MenuSolicitantesSolicitar(Ventana):
     def __init__(self):
