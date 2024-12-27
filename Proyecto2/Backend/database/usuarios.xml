@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<usuarios>
+	<usuario id="IPC-001" pwd="3267">
+		<NombreCompleto>Carlos Ruiz</NombreCompleto>
+		<CorreoElectronico>carlos.ruiz@example.com</CorreoElectronico>
+		<NumeroTelefono>6798429</NumeroTelefono>
+		<Direccion>Ciudad de Guatemala, Guatemala</Direccion>
+		<perfil>https://i.pinimg.com/236x/3a/be/84/3abe8400da18914a7ce19c22744537e0.jpg</perfil>
+	</usuario>
+</usuarios>
