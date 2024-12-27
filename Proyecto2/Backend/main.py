@@ -9,7 +9,7 @@ cors = CORS(app)
 
 app.register_blueprint(BlueprintUsuario)
 app.register_blueprint(BlueprintAuth)
-#app.register_blueprint(BlueprintAdmin)
+app.register_blueprint(BlueprintAdmin)
 
 
 if __name__ == '__main__':
