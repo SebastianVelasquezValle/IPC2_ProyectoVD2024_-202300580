@@ -7,12 +7,16 @@ from django.core.cache import cache
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
-from .forms import LoginForm
+from .forms import LoginForm, FileForm
 
 # Create your views here.
 
 endpoint = 'http://localhost:4000/'
 
+contexto = {
+    'contenido_archivo': None,
+    'binario_xml':None
+}
 #Esta es una vista de ejemplo, pero puedes agregar las que necesites
 def index(request):
     return render(request, 'index.html')
@@ -61,7 +65,7 @@ def iniciarSesion(request):
                     #cache.set('id_user', usuario_a_loguearse, timeout=None)
                     #Si quiero almacenarlo en la cookies
                     #pagina_redireccion = redirect('carga') # habilitar cuando se tenga la vista de carga
-                    pagina_redireccion = redirect('admin')
+                    pagina_redireccion = redirect('carga')
                     pagina_redireccion.set_cookie('id_user', iduser)
                     return pagina_redireccion
                 elif rol == 2:
@@ -78,8 +82,60 @@ def iniciarSesion(request):
     except:
         return render(request, 'login.html')
 
+'''
+    Admin
+'''
+
 def adminPage(request):
     return render(request, 'admin.html')
 
+def cargaAdminPage(request):
+    return render(request, 'carga.html')
+
+def cargarXML(request):
+    ctx = {
+        'contenido': None
+    }
+    try:
+        if request.method == 'POST':
+            form = FileForm(request.POST, request.FILES)
+            if form.is_valid():
+                archivo = request.FILES['file']
+                #guardamos el binario
+                xml = archivo.read()
+                xml_decodificado = xml.decode('utf-8')
+                #guardamos el contenido del archivo en nuestro contexto global
+                contexto['binario_xml'] = xml
+                contexto['contenido_archivo'] = xml_decodificado
+                #guardamos el contenido del archivo en nuestro contexto local
+                ctx['contenido'] = xml_decodificado
+                return render(request, 'carga.html', ctx)
+    except:
+        return render(request, 'carga.html')
+
+def enviarUsersXML(request):
+    try:
+        if request.method == 'POST':
+            xml = contexto['binario_xml'] # obtenemos el binario del archivo de la variable global
+            if xml is None:
+                return render(request, 'carga.html')
+            
+            #Peticion al backend
+            url = endpoint + 'admin/cargarUsuarios'
+            response = requests.post(url, data=xml)
+            respuesta = response.json()
+            print(respuesta)
+            contexto['binario_xml'] = None
+            contexto['contenido_archivo'] = None
+            return render(request, 'carga.html')
+    except:
+        return render(request, 'carga.html')
+
+
+
+
+'''
+    Usuario
+'''
 def userPage(request):
     return render(request, 'usuario.html')

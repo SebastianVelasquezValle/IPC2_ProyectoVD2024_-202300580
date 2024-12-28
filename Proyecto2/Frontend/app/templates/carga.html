@@ -1,0 +1,52 @@
+{% extends "admin.html" %}
+{% load static %}
+{% block content %}
+{# Agregamos la vista de carga #}
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400&display=swap" rel="stylesheet">
+<div class="container mx-auto p-6 max-w-3xl">
+    <h1 class="text-2xl font-bold mb-6">Carga Masiva</h1>
+    
+    <!-- Container for both forms and textarea -->
+    <div class="space-y-6">
+        <!-- Forms container -->
+        <div class="flex gap-4">
+            <!-- First form with two buttons -->
+            <form 
+                method="POST"
+                enctype="multipart/form-data"
+                action="/admin/cargaxml/"
+                class="flex gap-4"
+            >
+                {% csrf_token %}
+                <label for="file" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors cursor-pointer">
+                    Subir archivo
+                </label>
+                <input type="file" id="file" name="file" accept="text/xml" class="hidden">
+                <button type="submit" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded transition-colors">Ver archivo</button>
+            </form>
+
+            <!-- Second form with single button -->
+            <form
+                method="POST"
+                enctype="multipart/form-data"
+                action="/admin/cargausers/"
+            >
+            {% csrf_token %}
+                <button type="button" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded transition-colors">
+                    Cargar Archivo
+                </button>
+            </form>
+        </div>
+
+        <!-- Textarea container -->
+        <div>
+            {% if contenido  %}
+                <textarea class="w-full h-[400px] p-4 border border-gray-300 rounded font-['Fira_Code'] text-sm" placeholder="XML de solicitudes" readonly>{{contenido}}</textarea>
+            {% else %}
+                <textarea class="w-full h-[400px] p-4 border border-gray-300 rounded font-['Fira_Code'] text-sm" placeholder="XML de solicitudes" readonly></textarea>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

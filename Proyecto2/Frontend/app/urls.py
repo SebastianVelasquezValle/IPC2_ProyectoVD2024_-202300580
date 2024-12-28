@@ -10,4 +10,7 @@ urlpatterns = [
     path('signin/', views.iniciarSesion, name='signin'),
     path('admin/', views.adminPage, name='admin'),
     path('user/', views.userPage, name='user'),
+    path('admin/carga/', views.cargaAdminPage, name='carga'),
+    path('admin/cargaxml/', views.cargarXML, name='cargaxml'),
+    path('admin/cargausers/', views.enviarUsersXML, name='cargausers'),
 ]
