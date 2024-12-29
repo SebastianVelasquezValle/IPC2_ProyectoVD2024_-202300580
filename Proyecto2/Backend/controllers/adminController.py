@@ -13,6 +13,8 @@ def cargarUsuarios():
     
     lista_usuarios = preCargarXML()
     
+    usuariosInvalidos = [] #Lista de usuarios invalidos
+    
     try:
         xml_entrada = request.data.decode('utf-8')
         if xml_entrada == '':
@@ -44,12 +46,22 @@ def cargarUsuarios():
                     direccion = hijos.text
                 elif hijos.tag == 'perfil':
                     perfil = hijos.text
+                    
+            if validarIDUsuario(id) or validarCorreo(correo) or validarTelefono(telefono):
+                #print('Usuario no valido')
+                usuariosInvalidos.append({
+                    'id': id,
+                    'correo': correo,
+                    'telefono': telefono,
+                })
+                continue
 
             nuevo_usuario = Usuario(id,pwd,nombre,correo,telefono,direccion, perfil)
             lista_usuarios.append(nuevo_usuario)
         crearXML(lista_usuarios)
         return jsonify({
             'mensaje':'Usuarios cargados con éxito',
+            'usuarios_invalidos': usuariosInvalidos,
             'status':201
         }),201
 
@@ -117,6 +129,27 @@ def validarRepetido(id, lista_usuarios):
         if usuario.id == id:
             return True
     return False
+
+def validarIDUsuario(id):
+    if id.startswith('IPC-') and id[4:].isdigit():
+        #print('ID valido')
+        return False
+    #print('ID invalido')
+    return True
+
+def validarCorreo(correo):
+    if correo.endswith('.com') and '@' in correo:
+        #print('Correo valido')
+        return False
+    #print('Correo invalido')
+    return True
+
+def validarTelefono(telefono):
+    if telefono.isdigit() and len(telefono) == 8:
+        #print('Telefono valido')
+        return False
+    #print('Telefono invalido')
+    return True
 
 '''
 PERSISTENCIA
