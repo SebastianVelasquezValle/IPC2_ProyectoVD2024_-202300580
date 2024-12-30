@@ -131,8 +131,25 @@ def enviarUsersXML(request):
     except:
         return render(request, 'carga.html')
 
+def verUsuariosPage(request):
+    ctx = {
+        'usuarios':None
+    }
+    url = endpoint + 'admin/json'
+    response = requests.get(url)
+    data = response.json()
+    ctx['usuarios'] = data['usuarios']
+    return render(request, 'users.html', ctx)
 
-
+def verUsuariosXMLPage(request):
+    ctx = {
+        'contenido_xml':None
+    }
+    url = endpoint + 'admin/xml'
+    response = requests.get(url)
+    data = response.text
+    ctx['contenido_xml'] = data
+    return render(request, 'xmlusers.html', ctx)
 
 '''
     Usuario

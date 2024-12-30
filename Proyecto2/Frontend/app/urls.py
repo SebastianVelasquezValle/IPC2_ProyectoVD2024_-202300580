@@ -13,4 +13,6 @@ urlpatterns = [
     path('admin/carga/', views.cargaAdminPage, name='carga'),
     path('admin/cargaxml/', views.cargarXML, name='cargaxml'),
     path('admin/cargausers/', views.enviarUsersXML, name='cargausers'),
+    path('admin/users/', views.verUsuariosPage, name='users'),
+    path('admin/usersxml/', views.verUsuariosXMLPage, name='usersxml'),
 ]
