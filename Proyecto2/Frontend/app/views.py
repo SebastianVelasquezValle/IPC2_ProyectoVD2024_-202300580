@@ -64,7 +64,6 @@ def iniciarSesion(request):
                     #Si yo quiero almacenar el usuario en cache
                     #cache.set('id_user', usuario_a_loguearse, timeout=None)
                     #Si quiero almacenarlo en la cookies
-                    #pagina_redireccion = redirect('carga') # habilitar cuando se tenga la vista de carga
                     pagina_redireccion = redirect('carga')
                     pagina_redireccion.set_cookie('id_user', iduser)
                     return pagina_redireccion
@@ -150,6 +149,14 @@ def verUsuariosXMLPage(request):
     data = response.text
     ctx['contenido_xml'] = data
     return render(request, 'xmlusers.html', ctx)
+
+def cerrarSesion(request):
+    #si estas usando cache
+    #cache.delete('id_user')
+    #si estas usando cookies
+    response = redirect('login')
+    response.delete_cookie('id_user')
+    return response
 
 '''
     Usuario
