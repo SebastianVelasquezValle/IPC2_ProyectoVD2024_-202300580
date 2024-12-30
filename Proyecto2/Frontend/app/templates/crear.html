@@ -1,0 +1,65 @@
+{% extends "usuario.html" %}
+{% load static %}
+{% block usercontent %}
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400&display=swap" rel="stylesheet">
+<div class="container mx-auto p-6 max-w-5xl">
+    <h1 class="text-2xl font-bold mb-6">Carga Masiva</h1>
+    
+    <!-- Container for both forms and textarea -->
+    <div class="space-y-6">
+        <!-- Forms container -->
+        <div class="flex gap-4">
+            <!-- First form with two buttons -->
+            <form 
+                method="POST"
+                enctype="multipart/form-data"
+                action="/user/cargarxml/"
+                class="flex gap-4"
+            >
+                {% csrf_token %}
+                <label for="file" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors cursor-pointer">
+                    Subir archivo
+                </label>
+                <input type="file" id="file" name="file" accept="text/xml" class="hidden">
+                <button type="submit" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded transition-colors">Ver archivo</button>
+            </form>
+
+            <!-- Second form with single button -->
+            <form
+                method="POST"
+                enctype="multipart/form-data"
+                action="/user/cargadisenio/"
+            >
+                {% csrf_token %}
+                <button class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded transition-colors">
+                    Cargar Archivo
+                </button>
+            </form>
+        </div>
+
+        <!-- Textarea and image container -->
+        <div class="grid grid-cols-2 gap-6">
+            <div class="space-y-2">
+                <label for="xml" class="text-sm font-medium">XML:</label>
+                {% if contenido %}
+                    <textarea class="w-full h-[500px] border border-[#e5e7eb] rounded-lg p-3 font-mono text-sm leading-6 resize-none" placeholder="XML de la imagen" readonly>{{contenido}}</textarea>
+                {% else %}
+                    <textarea class="w-full h-[500px] border border-[#e5e7eb] rounded-lg p-3 font-mono text-sm leading-6 resize-none" placeholder="XML de la imagen" readonly></textarea>
+                {% endif %}
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-sm font-medium">Imagen resultante</label>
+                <div class="border rounded bg-gray-50 h-[500px] flex items-center justify-center">
+                {% if imagen %}
+                    <img class="w-full h-full border border-[#e5e7eb] rounded-lg bg-[#f3f4f6] flex items-center justify-center" src="data:image/svg+xml;base64,{{imagen}}" alt="Graphviz">
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
