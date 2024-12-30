@@ -19,4 +19,7 @@ urlpatterns = [
     path('user/crear/', views.crearPage, name='crear'),
     path('user/cargarxml/', views.cargarXMLDisenio, name='cargarxml'),
     path('user/cargadisenio/', views.enviarDisenio, name='cargadisenio'),
+    path('user/ayuda/', views.ayuda, name='ayuda'),
+    path('user/editar/', views.editarPage, name='editar'),
+    path('user/editarimagen/', views.editarImagen, name='editarimagen'),
 ]

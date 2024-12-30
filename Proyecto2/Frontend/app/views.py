@@ -9,7 +9,7 @@ from django.core.cache import cache
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
-from .forms import LoginForm, FileForm
+from .forms import LoginForm, FileForm, TextForm
 
 # Create your views here.
 
@@ -215,3 +215,56 @@ def enviarDisenio(request):
             return render(request, 'crear.html', ctx)
     except:
         return render(request, 'crear.html',ctx)
+    
+def ayuda(request):
+    return render(request, 'ayuda.html')
+
+def editarPage(request):
+    return render(request, 'editar.html')
+
+def editarImagen(request):
+    ctx = {
+        'imagen1': None,
+        'imagen2': None
+    }
+
+    try:
+        if request.method == 'POST':
+            form = TextForm(request.POST)
+            if form.is_valid():
+                action = request.POST.get('action')
+                textid = form.cleaned_data['textid']
+                filtro = 0
+
+                if action == 'grayscale':
+                    filtro = 1
+                elif action == 'sepia':
+                    filtro = 2
+
+                data = {
+                    'id': textid,
+                    'filtro': filtro
+                }
+
+                #obtengo el id del usuario
+                id_user = request.COOKIES.get('id_user')
+                #peticion al backend
+                url = endpoint + 'usuario/editar/' + id_user
+                #convertimos la data a json
+                json_data = json.dumps(data)
+
+                #HEADERS
+                headers = {
+                    'Content-Type':'application/json'
+                }
+
+                #Hacemos la peticion al backend
+                response = requests.post(url, data=json_data, headers=headers)
+
+                respuesta = response.json()
+
+                ctx['imagen1'] = respuesta['matriz1']
+                ctx['imagen2'] = respuesta['matriz2']
+                return render(request, 'editar.html',ctx)
+    except:
+        return render(request, 'editar.html')

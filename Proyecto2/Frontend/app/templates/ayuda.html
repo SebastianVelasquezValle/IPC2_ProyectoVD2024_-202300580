@@ -1,0 +1,34 @@
+{% extends "usuario.html" %}
+{% load static %}
+{% block usercontent %}
+<script src="https://cdn.tailwindcss.com"></script>
+<div class="help-section max-w-4xl mx-auto font-nunito">
+    <h1 class="text-3xl mb-8 text-gray-800">Ayuda</h1>
+
+    <div class="info-section bg-green-200 border border-gray-300 rounded-lg p-6 mb-8">
+        <h2 class="text-base text-gray-700 mb-4">Hecho por:</h2>
+        <div class="info-content flex flex-col gap-3 text-gray-600 text-sm">
+            <div><strong class="text-gray-700">Nombre del Alumno: </strong><span>Sebastian Velásquez</span></div>
+            <div><strong class="text-gray-700">Curso: </strong><span>Introducción a la Programación y Computación 2</span></div>
+            <div><strong class="text-gray-700">Sección: </strong><span>P</span></div>
+            <div><strong class="text-gray-700">Periodo: </strong><span>Vacaciones de diciembre 2024</span></div>
+            <div><strong class="text-gray-700">Github: </strong>
+                <a href="https://github.com/SebastianVelasquezValle" class="text-blue-600 hover:underline">SebastianVelasquezValle</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="documentation-section bg-blue-300 border border-gray-300 rounded-lg mb-8">
+        <h2 class="text-base text-gray-700 mb-4 p-6 pb-0">Programa de Laboratorio</h2>
+        <div class="documentation-content h-[500px] px-6 pb-6">
+            <embed 
+                src="{% static 'files/IPC2_Documentacion_P1_202300580.pdf' %}"
+                type="application/pdf"
+                class="pdf-viewer w-full h-full border border-gray-300 rounded-md"
+            />
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
