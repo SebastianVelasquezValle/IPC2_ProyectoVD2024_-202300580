@@ -1,0 +1,44 @@
+{% extends "admin.html" %}
+{% load static %}
+{% block content %}
+<script src="https://cdn.tailwindcss.com"></script>
+<div class="min-h-screen bg-blue-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-900 mb-8">Usuarios de IPC-Art Studio</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% if usuarios %}
+                {% for usuario in usuarios %}
+                    <div class="bg-blue-300 rounded-lg shadow p-6 flex gap-4 hover:shadow-lg transition-shadow">
+                        <div class="flex-shrink-0">
+                            <img src="{{usuario.perfil}}" 
+                                 alt="Avatar de {{usuario.nombre}}"
+                                 class="w-20 h-20 rounded-lg object-cover" />
+                        </div>
+                        <div class="flex-1">
+                            <h2 class="text-xl font-semibold text-gray-900 mb-2">{{usuario.nombre}}</h2>
+                            <dl class="grid gap-1 text-sm">
+                                <p class="user-description">
+                                    <span class="font-semibold text-gray-700">ID: </span>
+                                    <span class="text-gray-600">{{usuario.id}}</span>
+                                </p>
+                                <p class="user-description">
+                                    <span class="font-semibold text-gray-700">Correo: </span>
+                                    <span class="text-gray-600">{{usuario.correo}}</span>
+                                </p>
+                                <p class="user-description">
+                                    <span class="font-semibold text-gray-700">Telefono: </span>
+                                    <span class="text-gray-600">{{usuario.telefono}}</span>
+                                </p>
+                                <p class="user-description">
+                                    <span class="font-semibold text-gray-700">Dirección: </span>
+                                    <span class="text-gray-600">{{usuario.direccion}}</span>
+                                </p>
+                            </dl>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+/* Estilos base */
+body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+  }
+  
+  /* Contenedor del formulario */
+  .w-full { width: 100%; }
+  .max-w-md { max-width: 28rem; }
+  .p-8 { padding: 2rem; }
+  .border-2 { border-width: 2px; }
+  .border-black { border-color: black; }
+  .bg-sky-200 { background-color: #bae6fd; }
+  
+  /* Contenedor del icono */
+  .flex { display: flex; }
+  .justify-center { justify-content: center; }
+  .mb-8 { margin-bottom: 2rem; }
+  
+  /* Icono */
+  .p-4 { padding: 1rem; }
+  .rounded-full { border-radius: 9999px; }
+  .bg-white { background-color: white; }
+  
+  /* Espaciado del formulario */
+  .space-y-6 > * + * { margin-top: 1.5rem; }
+  .space-y-2 > * + * { margin-top: 0.5rem; }
+  
+  /* Etiquetas */
+  .block { display: block; }
+  .text-sm { font-size: 0.875rem; }
+  .font-medium { font-weight: 500; }
+  
+  /* Inputs */
+  .w-full { width: 100%; }
+  .p-2 { padding: 0.5rem; }
+  .focus\:outline-none:focus { outline: none; }
+  
+  /* Botón */
+  .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+  .px-4 { padding-left: 1rem; padding-right: 1rem; }
+  .hover\:bg-gray-100:hover { background-color: #f3f4f6; }
+  
+  /* Utilidades adicionales */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+  
+  
