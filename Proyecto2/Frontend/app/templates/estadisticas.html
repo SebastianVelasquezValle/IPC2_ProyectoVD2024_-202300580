@@ -7,19 +7,25 @@
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <div class="stats-section">
     <h1 style="margin-bottom:30%">Estadísticas</h1>
-    <!-- <div class="chart-section">
-        <h2>Top 3 de usuarios con más imagenes cargadas</h2>
-        <div class="chart top-users">
-            {{plot_div2|safe}}
-        </div>
-    </div> -->
-    
-    <div class="chart-section">
-        <h2>Imagenes procesadas y editadas por usuario</h2>
-        <div class="chart top-users">
-            {{plot_div|safe}}
+    <div style="margin-bottom:30%">
+        <div class="chart-section">
+            <h2>Top 3 de usuarios con más imagenes cargadas</h2>
+            <div class="chart top-users">
+                {{plot_div2|safe}}
+            </div>
         </div>
     </div>
+    
+    <div>
+        <div class="chart-section">
+            <h2>Imagenes procesadas y editadas por usuario</h2>
+            <div class="chart top-users">
+                {{plot_div|safe}}
+            </div>
+        </div>
+    </div>
+    
+    
 </div>
 
 <!-- <div class="stats-section mx-auto max-w-3xl">

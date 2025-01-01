@@ -271,7 +271,8 @@ def editarImagen(request):
     
 def statsPage(request):
     ctx = {
-        'plot_div': None
+        'plot_div': None,
+        'plot_div2': None
     }
     #peticion al backend
     url = endpoint + 'admin/estadistica'
@@ -290,10 +291,17 @@ def statsPage(request):
         usuarios.append(dato['id_usuario'])
         cantidad_imagenes.append(dato['imagenes'])
     
-    #Dibujar mi grafica
+    usuariostop = []
+    cantidad_imagenestop = []
+    for dato in data['top']:
+        usuariostop.append(dato['id_usuario'])
+        cantidad_imagenestop.append(dato['imagenes'])
+    
+    #Dibujar mi grafica 1
     trace = go.Bar(
         y=cantidad_imagenes,
-        x=usuarios
+        x=usuarios,
+        marker=dict(color=['#0bafee', '#f03a53', '#ffb91b', '#1dd5a3', '#564ad4'])  # Colores personalizados
     )
 
     layout = go.Layout(
@@ -308,5 +316,26 @@ def statsPage(request):
 
     fig = go.Figure(data=[trace], layout=layout)
     ctx['plot_div'] = pyo.plot(fig, include_plotlyjs=False, output_type='div')
+    
+    
+    #Dibujar mi grafica 2
+    trace2 = go.Bar(
+        y=cantidad_imagenestop,
+        x=usuariostop,
+        marker=dict(color=['#0bafee', '#f03a53', '#ffb91b'])
+    )
+
+    layout2 = go.Layout(
+        title='Top 3 de usuarios con más imagenes cargadas',
+        xaxis={
+            'title': 'Top 3',
+        },
+        yaxis={
+            'title': 'Cantidad de imagenes',
+        }
+    )
+
+    fig2 = go.Figure(data=[trace2], layout=layout2)
+    ctx['plot_div2'] = pyo.plot(fig2, include_plotlyjs=False, output_type='div')
 
     return render(request, 'estadisticas.html', ctx)

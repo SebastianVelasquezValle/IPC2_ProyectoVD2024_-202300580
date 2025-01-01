@@ -145,8 +145,16 @@ def estadistica():
         }
         data_retornar.append(data)
     
+    top1, top2, top3 = top3Usuarios(data_retornar)
+    data_top = []
+    data_top.append(top1)
+    data_top.append(top2)
+    data_top.append(top3)
+    
+    
     return jsonify({
         'data': data_retornar,
+        'top': data_top,
         'status':200
     }),200
 
@@ -181,6 +189,23 @@ def validarTelefono(telefono):
         return False
     #print('Telefono invalido')
     return True
+
+def top3Usuarios(data):
+    top = []
+    for dato in data:
+        # Inserta el dato en la lista top y luego ordena por imágenes (mayor a menor)
+        top.append(dato)
+        top = sorted(top, key=lambda x: x['imagenes'], reverse=True)
+        
+        # Limita la lista a solo los tres primeros elementos
+        if len(top) > 3:
+            top.pop()  # Elimina el último elemento si la lista tiene más de 3
+    
+    # Si no hay suficientes datos, completa con None
+    while len(top) < 3:
+        top.append(None)
+    
+    return top[0], top[1], top[2]
 
 '''
 PERSISTENCIA
