@@ -1,6 +1,7 @@
 import os
 from xml.etree import ElementTree as ET
 
+from controllers.usuarioController import preCargarXMLImagenes
 from flask import Blueprint, request, jsonify
 from models.Usuario import Usuario
 
@@ -117,7 +118,37 @@ def getUsuariosXML():
     xml_str = ET.tostring(tree, encoding='utf-8', xml_declaration=True)
     return xml_str
 
-
+#RUTA: http://localhost:4000/admin/estadistica
+@BlueprintAdmin.route('/admin/estadistica', methods=['GET'])
+def estadistica():
+    lista_usuarios = preCargarXML()
+    lista_imagenes = preCargarXMLImagenes()
+    
+    data_retornar = []
+    '''
+    {
+        'id usuario': ...
+        'imagenes': int
+    }
+    '''
+    
+    for usuario in lista_usuarios:
+        id_usuario = usuario.id
+        contador = 0
+        for imagen in lista_imagenes:
+            if imagen.id_usuario == id_usuario:
+                contador += 1
+        
+        data = {
+            'id_usuario': id_usuario,
+            'imagenes': contador
+        }
+        data_retornar.append(data)
+    
+    return jsonify({
+        'data': data_retornar,
+        'status':200
+    }),200
 
 
 '''

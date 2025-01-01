@@ -15,6 +15,7 @@ urlpatterns = [
     path('admin/cargausers/', views.enviarUsersXML, name='cargausers'),
     path('admin/users/', views.verUsuariosPage, name='users'),
     path('admin/usersxml/', views.verUsuariosXMLPage, name='usersxml'),
+    path('admin/estadisticas/', views.statsPage, name='estadisticas'),
     path('logout/', views.cerrarSesion, name='logout'),
     path('user/crear/', views.crearPage, name='crear'),
     path('user/cargarxml/', views.cargarXMLDisenio, name='cargarxml'),

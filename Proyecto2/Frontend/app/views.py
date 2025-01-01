@@ -268,3 +268,45 @@ def editarImagen(request):
                 return render(request, 'editar.html',ctx)
     except:
         return render(request, 'editar.html')
+    
+def statsPage(request):
+    ctx = {
+        'plot_div': None
+    }
+    #peticion al backend
+    url = endpoint + 'admin/estadistica'
+    response = requests.get(url)
+
+    data = response.json()
+
+    usuarios = []
+    cantidad_imagenes = []
+    '''
+    [IPC1,IPC2,IPC3,IPC4,IPC5]
+    [3,4,6,1,0]
+    '''
+
+    for dato in data['data']:
+        usuarios.append(dato['id_usuario'])
+        cantidad_imagenes.append(dato['imagenes'])
+    
+    #Dibujar mi grafica
+    trace = go.Bar(
+        y=cantidad_imagenes,
+        x=usuarios
+    )
+
+    layout = go.Layout(
+        title='Cantidad de imagenes por usuario',
+        xaxis={
+            'title': 'Usuarios',
+        },
+        yaxis={
+            'title': 'Cantidad de imagenes',
+        }
+    )
+
+    fig = go.Figure(data=[trace], layout=layout)
+    ctx['plot_div'] = pyo.plot(fig, include_plotlyjs=False, output_type='div')
+
+    return render(request, 'estadisticas.html', ctx)
