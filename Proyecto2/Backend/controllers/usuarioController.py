@@ -1,7 +1,7 @@
 import os
 from xml.etree import ElementTree as ET
 
-from controllers.adminController import preCargarXML
+#from controllers.adminController import preCargarXML
 from flask import Blueprint, request, jsonify
 from models.Imagen import Imagen
 from models.matrizDispera.matrizDispersa import MatrizDispersa
