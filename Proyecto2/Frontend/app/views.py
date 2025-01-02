@@ -339,3 +339,14 @@ def statsPage(request):
     ctx['plot_div2'] = pyo.plot(fig2, include_plotlyjs=False, output_type='div')
 
     return render(request, 'estadisticas.html', ctx)
+
+def galeriaPage(request):
+    ctx = {
+        'galeria':None
+    }
+    
+    url = endpoint + 'usuario/galeria'
+    response = requests.get(url)
+    data = response.json()
+    ctx['galeria'] = data['galeria']
+    return render(request, 'galeria.html', ctx)

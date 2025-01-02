@@ -23,4 +23,5 @@ urlpatterns = [
     path('user/ayuda/', views.ayuda, name='ayuda'),
     path('user/editar/', views.editarPage, name='editar'),
     path('user/editarimagen/', views.editarImagen, name='editarimagen'),
+    path('user/galeria/', views.galeriaPage, name='galeria'),
 ]
