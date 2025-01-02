@@ -1,8 +1,10 @@
 import os
 from xml.etree import ElementTree as ET
 
+from controllers.usuarioController import preCargarXMLImagenes
 from flask import Blueprint, request, jsonify
 from models.Usuario import Usuario
+from models.Imagen import Imagen
 
 #Creando el blueprint
 BlueprintAdmin = Blueprint('admin', __name__)
@@ -96,6 +98,7 @@ def getUsuariosJSON():
 @BlueprintAdmin.route('/admin/xml', methods=['GET'])
 def getUsuariosXML():
     lista_usuarios = preCargarXML()
+    lista_imagenes = preCargarXMLImagenes()
     tree = ET.Element('usuarios')
     for usuario in lista_usuarios:
         #2. Creamos un elemento usuario
@@ -112,12 +115,54 @@ def getUsuariosXML():
         perfil = ET.SubElement(usuario_xml, 'perfil')
         perfil.text = usuario.perfil
         imagenes = ET.SubElement(usuario_xml, 'imagenes')
+        for imagen in lista_imagenes:
+            if imagen.id_usuario == usuario.id:
+                imagen_xml = ET.SubElement(imagenes, 'imagen', id=str(imagen.id))
+                imagen_xml.text = imagen.nombre
     
     ET.indent(tree, space='\t', level=0)
     xml_str = ET.tostring(tree, encoding='utf-8', xml_declaration=True)
     return xml_str
 
-
+#RUTA: http://localhost:4000/admin/estadistica
+@BlueprintAdmin.route('/admin/estadistica', methods=['GET'])
+def estadistica():
+    lista_usuarios = preCargarXML()
+    lista_imagenes = preCargarXMLImagenes()
+    
+    data_retornar = []
+    '''
+    {
+        'id usuario': ...
+        'imagenes': int
+    }
+    '''
+    
+    for usuario in lista_usuarios:
+        id_usuario = usuario.id
+        contador = 0
+        for imagen in lista_imagenes:
+            if imagen.id_usuario == id_usuario:
+                contador += 1
+        
+        data = {
+            'id_usuario': id_usuario,
+            'imagenes': contador
+        }
+        data_retornar.append(data)
+    
+    top1, top2, top3 = top3Usuarios(data_retornar)
+    data_top = []
+    data_top.append(top1)
+    data_top.append(top2)
+    data_top.append(top3)
+    
+    
+    return jsonify({
+        'data': data_retornar,
+        'top': data_top,
+        'status':200
+    }),200
 
 
 '''
@@ -150,6 +195,23 @@ def validarTelefono(telefono):
         return False
     #print('Telefono invalido')
     return True
+
+def top3Usuarios(data):
+    top = []
+    for dato in data:
+        # Inserta el dato en la lista top y luego ordena por imágenes (mayor a menor)
+        top.append(dato)
+        top = sorted(top, key=lambda x: x['imagenes'], reverse=True)
+        
+        # Limita la lista a solo los tres primeros elementos
+        if len(top) > 3:
+            top.pop()  # Elimina el último elemento si la lista tiene más de 3
+    
+    # Si no hay suficientes datos, completa con None
+    while len(top) < 3:
+        top.append(None)
+    
+    return top[0], top[1], top[2]
 
 '''
 PERSISTENCIA

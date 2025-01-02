@@ -1,0 +1,28 @@
+{% extends "usuario.html" %}
+{% load static %}
+{% block usercontent %}
+<script src="https://cdn.tailwindcss.com"></script>
+<div class=" p-6">
+    <h1 class="text-2xl font-bold mb-6">Galería</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Card  -->
+        {% if galeria %}
+            {% for figura in galeria %}
+                <div class="bg-gray-300 border border-gray-300 p-4 rounded hover:shadow-lg transition-shadow">
+                    <div class="bg-gray-200  mb-4">
+                        <img src="data:image/svg+xml;base64,{{figura.matriz}}" alt="Imagen de {{figura.id_usuario}}" class="w-full h-full object-cover rounded-md">
+                    </div>
+                    <div class="space-y-1">
+                        <p class="text-sm">ID: {{figura.id}}</p>
+                        <p class="text-sm">Nombre: {{figura.id_usuario}}</p>
+                        <p class="text-sm ">Figura: {{figura.nombre}}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}

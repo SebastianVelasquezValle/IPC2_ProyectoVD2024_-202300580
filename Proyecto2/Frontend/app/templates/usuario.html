@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Usuariu</title>
+</head>
+<body>
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-blue-900 text-white">
+            <!-- Header -->
+            <div class="p-4 border-b border-blue-800">
+                <div class="flex items-center gap-2">
+                    <div class="w-6 h-6 bg-white rounded-full"></div>
+                    <h1 class="font-semibold">IPCArt-Studio</h1>
+                </div>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="p-2">
+                <a href="{% url 'galeria' %}" class="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-800 transition-colors">
+                    <img src="https://img.icons8.com/pastel-glyph/64/image--v2.png" alt="Galeria" class="w-5 h-5 invert">
+                    <span>Galeria</span>
+                </a>
+                
+                <a href="{% url 'crear' %}" class="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-800 transition-colors">
+                    <img src="https://img.icons8.com/material-outlined/48/add-image.png" alt="Cargar Imagen" class="w-5 h-5 invert">
+                    <span>Cargar Imagen</span>
+                </a>
+                
+                <a href="{% url 'editar' %}" class="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-800 transition-colors">
+                    <img src="https://img.icons8.com/parakeet-line/96/edit-image.png" alt="Editor de Imagenes" class="w-5 h- invert">
+                    <span>Editor de Imagenes</span>
+                </a>
+                
+                <a href="{% url 'ayuda' %}" class="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-800 transition-colors">
+                    <img src="https://img.icons8.com/ios/100/help--v1.png" alt="Ayuda" class="w-5 h-5 invert">
+                    <span>Ayuda</span>
+                </a>
+                
+                <a href="{% url 'logout' %}" class="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-800 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
+                    <span>Cerrar Sesión</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content flex-1 bg-blue-50">
+            {% block usercontent %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>
