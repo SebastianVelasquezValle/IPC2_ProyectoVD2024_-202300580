@@ -11,7 +11,38 @@ from models.Pixel import Pixel
 BlueprintUsuario = Blueprint('usuario', __name__)
 
 #RUTA: http://localhost:4000/usuario/galeria
-#aqui va el endpoint
+@BlueprintUsuario.route('/usuario/galeria', methods=['GET'])
+def galeriaJSON():
+    lista_imagenes = preCargarXMLImagenes()
+    galeria = []
+    
+    try:
+        for imagen in lista_imagenes:
+            #Creamos la matriz dispersa
+            matriz = MatrizDispersa()
+            # Insertamos los pixeles en la matriz
+            for pixel in imagen.pixeles:
+                pixel:Pixel
+                matriz.insertar(pixel.fila, pixel.columna, pixel.color)
+            
+            img = {
+                'id': imagen.id,
+                'id_usuario': imagen.id_usuario,
+                'nombre': imagen.nombre,
+                'matriz': matriz.graficar()
+            }
+            galeria.append(img)
+            
+        return jsonify({
+            'galeria': galeria,
+            'status': 200,   
+        }), 200
+    except:
+        return jsonify({
+            'message': 'Error al cargar la galeria',
+            'status': 404
+        }), 404
+        
 
 
 #RUTA: http://localhost:4000/usuario/carga/:id_usuario

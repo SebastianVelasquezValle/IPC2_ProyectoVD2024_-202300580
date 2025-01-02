@@ -4,6 +4,7 @@ from xml.etree import ElementTree as ET
 from controllers.usuarioController import preCargarXMLImagenes
 from flask import Blueprint, request, jsonify
 from models.Usuario import Usuario
+from models.Imagen import Imagen
 
 #Creando el blueprint
 BlueprintAdmin = Blueprint('admin', __name__)
@@ -97,6 +98,7 @@ def getUsuariosJSON():
 @BlueprintAdmin.route('/admin/xml', methods=['GET'])
 def getUsuariosXML():
     lista_usuarios = preCargarXML()
+    lista_imagenes = preCargarXMLImagenes()
     tree = ET.Element('usuarios')
     for usuario in lista_usuarios:
         #2. Creamos un elemento usuario
@@ -113,6 +115,10 @@ def getUsuariosXML():
         perfil = ET.SubElement(usuario_xml, 'perfil')
         perfil.text = usuario.perfil
         imagenes = ET.SubElement(usuario_xml, 'imagenes')
+        for imagen in lista_imagenes:
+            if imagen.id_usuario == usuario.id:
+                imagen_xml = ET.SubElement(imagenes, 'imagen', id=str(imagen.id))
+                imagen_xml.text = imagen.nombre
     
     ET.indent(tree, space='\t', level=0)
     xml_str = ET.tostring(tree, encoding='utf-8', xml_declaration=True)
